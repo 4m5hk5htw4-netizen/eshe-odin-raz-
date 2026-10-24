@@ -119,9 +119,9 @@ button:active{transform:scale(.97)}
 <section id="collectionScreen" class="screen hidden">
   <div style="min-height:100%;display:flex;align-items:flex-start;justify-content:center;padding:20px 14px"><div class="panel" style="margin:auto">
     <h2 class="section-title">КОЛЛЕКЦИЯ</h2><p class="subtitle">ОТКРЫВАЙ НОВЫЕ МИРЫ И ШАРЫ</p>
-    <h3 style="text-align:left;font-size:15px;margin:12px 0">УРОВЕНЬ И ОПЫТ</h3><div class="mission-box level-box"><div style="display:flex;align-items:center;justify-content:space-between;gap:10px"><strong id="playerLevel">УРОВЕНЬ 1</strong><span id="playerXP">0 XP</span></div><div class="progress-track"><div id="levelProgress" class="progress-fill"></div></div><div id="levelNext" class="item-info">До следующего уровня: 100 XP</div><div id="levelReward" class="item-info">Награда за уровень: бонусные очки и новый ранг</div></div><h3 style="text-align:left;font-size:15px;margin:18px 0 12px">СТАТИСТИКА</h3><div class="feature-grid"><div class="feature-card"><small>СЫГРАНО ИГР</small><strong id="statGames">0</strong></div><div class="feature-card"><small>ПОПАДАНИЯ</small><strong id="statHits">0</strong></div><div class="feature-card"><small>ПРОМАХИ</small><strong id="statMisses">0</strong></div><div class="feature-card"><small>ЛУЧШЕЕ КОМБО</small><strong id="statCombo">0</strong></div><div class="feature-card"><small>ВСЕГО ОЧКОВ ЗА ИГРУ</small><strong id="statBestRun">0</strong></div><div class="feature-card"><small>ДНЕЙ С ИГРОЙ ПОДРЯД</small><strong id="statStreak">0</strong></div></div><div class="mission-box"><strong>🎯 ЗАДАНИЕ ДНЯ</strong><div id="dailyMissionText" class="item-info">Сыграй одну партию</div><div class="progress-track"><div id="dailyProgress" class="progress-fill"></div></div><div id="dailyReward" class="item-info">Награда: опыт игрока</div></div><h3 style="text-align:left;font-size:15px;margin:22px 0 12px">ДОСТИЖЕНИЯ</h3><div id="achievementsGrid" class="achievement-list"></div><h3 style="text-align:left;font-size:15px;margin:22px 0 12px">КАРТЫ</h3><div id="mapsGrid" class="grid-items"></div>
+    <h3 style="text-align:left;font-size:15px;margin:12px 0">УРОВЕНЬ И ОПЫТ</h3><div class="mission-box level-box"><div style="display:flex;align-items:center;justify-content:space-between;gap:10px"><strong id="playerLevel">УРОВЕНЬ 1</strong><span id="playerXP">0 XP</span></div><div class="progress-track"><div id="levelProgress" class="progress-fill"></div></div><div id="levelNext" class="item-info">До следующего уровня: 100 XP</div><div id="levelReward" class="item-info">Награда за уровень: бонусные очки и новый ранг</div></div><h3 style="text-align:left;font-size:15px;margin:18px 0 12px">СТАТИСТИКА</h3><div class="feature-grid"><div class="feature-card"><small>СЫГРАНО ИГР</small><strong id="statGames">0</strong></div><div class="feature-card"><small>ПОПАДАНИЯ</small><strong id="statHits">0</strong></div><div class="feature-card"><small>ПРОМАХИ</small><strong id="statMisses">0</strong></div><div class="feature-card"><small>ЛУЧШЕЕ КОМБО</small><strong id="statCombo">0</strong></div><div class="feature-card"><small>ВСЕГО ОЧКОВ ЗА ИГРУ</small><strong id="statBestRun">0</strong></div><div class="feature-card"><small>ДНЕЙ С ИГРОЙ ПОДРЯД</small><strong id="statStreak">0</strong></div></div><div class="mission-box"><strong>🎯 ЗАДАНИЕ ДНЯ</strong><div id="dailyMissionText" class="item-info">Сыграй одну партию</div><div class="progress-track"><div id="dailyProgress" class="progress-fill"></div></div><div id="dailyReward" class="item-info">Награда: опыт игрока</div></div><h3 style="text-align:left;font-size:15px;margin:22px 0 12px">ДОСТИЖЕНИЯ</h3><div id="achievementsGrid" class="achievement-list"></div><h3 style="text-align:left;font-size:15px;margin:22px 0 12px">КАРТЫ · ОТКРЫВАЮТСЯ ПО УРОВНЮ</h3><div id="mapsGrid" class="grid-items"></div>
     <h3 style="text-align:left;font-size:15px;margin:22px 0 12px">ШАРЫ</h3><div id="ballsGrid" class="grid-items"></div>
-    <p class="note">Новые предметы открываются за набранные очки. Рекорд сохраняется отдельно на каждой карте.</p>
+    <p class="note">Карты открываются за уровни игрока, а шары — за рекордные очки. Рекорд сохраняется отдельно на каждой карте.</p>
     <button class="neon-btn secondary" id="collectionBackBtn">← НАЗАД</button>
   </div></div>
 </section>
@@ -142,11 +142,11 @@ button:active{transform:scale(.97)}
 "use strict";
 
 const MAPS=[
-{name:"Космос",need:0,bg:"#080b1c",mid:"#18213e",accent:"#35f4ff",glow:"#008dff",nebula:"#172f71",planet:"#3154a8"},
-{name:"Неоновый город",need:1000,bg:"#10091d",mid:"#321347",accent:"#ff4fd8",glow:"#b52cff",nebula:"#61205d",planet:"#a02d9c"},
-{name:"Фиолетовая галактика",need:2500,bg:"#0c0821",mid:"#2c1854",accent:"#b78aff",glow:"#783cff",nebula:"#4b2a8e",planet:"#8652cf"},
-{name:"Огненная арена",need:5000,bg:"#1a0908",mid:"#43170f",accent:"#ff8b38",glow:"#ff3427",nebula:"#7b2715",planet:"#d65022"},
-{name:"Золотая энергия",need:10000,bg:"#161105",mid:"#44340c",accent:"#fff06a",glow:"#ff9d18",nebula:"#725018",planet:"#c49b24"}
+{name:"Космос",needLevel:1,bg:"#080b1c",mid:"#18213e",accent:"#35f4ff",glow:"#008dff",nebula:"#172f71",planet:"#3154a8"},
+{name:"Неоновый город",needLevel:2,bg:"#10091d",mid:"#321347",accent:"#ff4fd8",glow:"#b52cff",nebula:"#61205d",planet:"#a02d9c"},
+{name:"Фиолетовая галактика",needLevel:4,bg:"#0c0821",mid:"#2c1854",accent:"#b78aff",glow:"#783cff",nebula:"#4b2a8e",planet:"#8652cf"},
+{name:"Огненная арена",needLevel:7,bg:"#1a0908",mid:"#43170f",accent:"#ff8b38",glow:"#ff3427",nebula:"#7b2715",planet:"#d65022"},
+{name:"Золотая энергия",needLevel:10,bg:"#161105",mid:"#44340c",accent:"#fff06a",glow:"#ff9d18",nebula:"#725018",planet:"#c49b24"}
 ];
 const BALLS=[
 {name:"Неоновый",need:0,color:"#35f4ff",glow:"#008dff",points:1},
@@ -229,7 +229,7 @@ function showScreen(name){
 }
 function updateMenuStats(){
   $("menuRecord").textContent=record;
-  $("unlockedCount").textContent=MAPS.filter(m=>record>=m.need).length+BALLS.filter(b=>record>=b.need).length+"/"+(MAPS.length+BALLS.length);
+  $("unlockedCount").textContent=MAPS.filter(m=>levelInfo().level>=m.needLevel).length+BALLS.filter(b=>record>=b.need).length+"/"+(MAPS.length+BALLS.length);
   renderProgress();
 }
 function showToast(text,emph=false,comboCount=null){
@@ -262,7 +262,7 @@ const ACHIEVEMENTS=[
  ["⚡","На волне","Собери комбо x25",()=>bestCombo>=25],
  ["💥","Перегрузка","Достигни комбо x40",()=>bestCombo>=40],
  ["👑","Легенда","Собери комбо x100",()=>bestCombo>=100],
- ["🌌","Исследователь","Открой 3 карты",()=>MAPS.filter(m=>record>=m.need).length>=3],
+ ["🌌","Исследователь","Открой 3 карты",()=>MAPS.filter(m=>levelInfo().level>=m.needLevel).length>=3],
  ["🎨","Коллекционер","Открой 5 шаров",()=>BALLS.filter(b=>record>=b.need).length>=5],
  ["🏆","Рекордсмен","Набери 5000 очков за одну игру",()=>bestRun>=5000],
  ["🔁","Не сдаюсь","Сыграй 10 партий",()=>gamesPlayed>=10],
@@ -285,19 +285,19 @@ function renderCollection(){
   const mapsGrid=$("mapsGrid"),ballsGrid=$("ballsGrid");
   mapsGrid.innerHTML="";ballsGrid.innerHTML="";
   MAPS.forEach((m,i)=>{
-    const unlocked=record>=m.need,card=document.createElement("div");
+    const unlocked=levelInfo().level>=m.needLevel,card=document.createElement("div");
     card.className="item-card"+(selectedMap===i?" selected":"")+(!unlocked?" locked":"");
     const preview=document.createElement("div");preview.className="map-preview";
     preview.style.background="radial-gradient(circle at 50% 50%,"+m.planet+","+m.bg+" 80%)";
     preview.style.setProperty("--preview",m.accent);
     const name=document.createElement("div");name.className="item-name";name.textContent=m.name;
     const info=document.createElement("div");info.className="item-info";
-    info.textContent=selectedMap===i?"✓ Выбрана":unlocked?"Нажми, чтобы выбрать":"🔒 "+m.need+" очков";
+    info.textContent=selectedMap===i?"✓ Выбрана":unlocked?"Нажми, чтобы выбрать":"🔒 Уровень "+m.needLevel;
     const best=document.createElement("div");best.className="item-info";
     best.textContent="Рекорд карты: "+(mapRecords[i]||0);
     card.append(preview,name,info,best);
     card.addEventListener("click",()=>{
-      if(!unlocked){showToast("НУЖНО "+m.need+" ОЧКОВ");return}
+      if(!unlocked){showToast("НУЖЕН УРОВЕНЬ "+m.needLevel);return}
       selectedMap=i;syncTheme();saveData();renderCollection();updateHUD();
     });
     mapsGrid.appendChild(card);
