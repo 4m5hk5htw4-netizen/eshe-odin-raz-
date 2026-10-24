@@ -66,6 +66,9 @@ button:active{transform:scale(.97)}
 .note{color:var(--muted);font-size:11px;line-height:1.5;margin-top:15px}
 .feature-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0;text-align:left}.feature-card{padding:11px;border-radius:13px;background:rgba(255,255,255,.035);border:1px solid rgba(131,159,220,.2)}.feature-card strong{display:block;font-size:18px}.feature-card small{color:var(--muted);font-size:10px}.achievement{display:flex;align-items:center;gap:10px;padding:10px;border:1px solid rgba(131,159,220,.2);border-radius:13px;text-align:left;background:rgba(255,255,255,.025)}.achievement.unlocked{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 8%,transparent)}.achievement-icon{font-size:24px;width:32px;text-align:center}.achievement small{display:block;color:var(--muted);font-size:10px}.achievement-list{display:grid;gap:8px}.mission-box{padding:12px;text-align:left;border:1px solid var(--accent);border-radius:14px;background:rgba(255,255,255,.035);margin:12px 0}.progress-track{height:6px;background:#222b45;border-radius:99px;overflow:hidden;margin-top:8px}.progress-fill{height:100%;width:0;background:var(--accent);border-radius:99px;transition:width .2s}
 #gameOverTitle{color:#ff7194}
+#countdownOverlay{position:absolute;inset:0;z-index:8;display:flex;align-items:center;justify-content:center;background:rgba(3,6,20,.22);pointer-events:none}
+#countdownNumber{font-size:clamp(90px,27vw,170px);font-weight:1000;line-height:1;color:#fff;text-shadow:0 0 18px var(--accent),0 0 50px var(--glow);animation:countPop .72s ease-out both}
+@keyframes countPop{0%{transform:scale(1.65);opacity:0}25%{opacity:1}100%{transform:scale(.82);opacity:.88}}
 @media(max-height:650px){.panel{padding:17px 16px}.logo{font-size:30px}.subtitle{margin-bottom:13px}.neon-btn{padding:11px;margin-top:8px}.top-button{top:90px}}
 </style>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -80,7 +83,7 @@ button:active{transform:scale(.97)}
   </div>
   <button class="top-button" id="menuBtn" aria-label="Меню">⌂</button>
   <button class="top-button" id="pauseBtn" aria-label="Пауза">Ⅱ</button>
-  <div id="toast"></div><div id="gameHint">НАЖМИ, КОГДА ШАР В ЦЕЛИ</div>
+  <div id="toast"></div><div id="countdownOverlay" class="hidden"><div id="countdownNumber">3</div></div><div id="gameHint">НАЖМИ, КОГДА ШАР В ЦЕЛИ</div>
   <div id="pauseOverlay" class="overlay hidden"><div class="panel">
     <h2 class="section-title">ПАУЗА</h2>
     <button class="neon-btn primary" id="resumeBtn">▶ ПРОДОЛЖИТЬ</button>
@@ -121,7 +124,7 @@ button:active{transform:scale(.97)}
     <h2 class="section-title">КОЛЛЕКЦИЯ</h2><p class="subtitle">ОТКРЫВАЙ НОВЫЕ МИРЫ И ШАРЫ</p>
     <h3 style="text-align:left;font-size:15px;margin:12px 0">УРОВЕНЬ И ОПЫТ</h3><div class="mission-box level-box"><div style="display:flex;align-items:center;justify-content:space-between;gap:10px"><strong id="playerLevel">УРОВЕНЬ 1</strong><span id="playerXP">0 XP</span></div><div class="progress-track"><div id="levelProgress" class="progress-fill"></div></div><div id="levelNext" class="item-info">До следующего уровня: 100 XP</div><div id="levelReward" class="item-info">Награда за уровень: бонусные очки и новый ранг</div></div><h3 style="text-align:left;font-size:15px;margin:18px 0 12px">СТАТИСТИКА</h3><div class="feature-grid"><div class="feature-card"><small>СЫГРАНО ИГР</small><strong id="statGames">0</strong></div><div class="feature-card"><small>ПОПАДАНИЯ</small><strong id="statHits">0</strong></div><div class="feature-card"><small>ПРОМАХИ</small><strong id="statMisses">0</strong></div><div class="feature-card"><small>ЛУЧШЕЕ КОМБО</small><strong id="statCombo">0</strong></div><div class="feature-card"><small>ВСЕГО ОЧКОВ ЗА ИГРУ</small><strong id="statBestRun">0</strong></div><div class="feature-card"><small>ДНЕЙ С ИГРОЙ ПОДРЯД</small><strong id="statStreak">0</strong></div></div><div class="mission-box"><strong>🎯 ЗАДАНИЕ ДНЯ</strong><div id="dailyMissionText" class="item-info">Сыграй одну партию</div><div class="progress-track"><div id="dailyProgress" class="progress-fill"></div></div><div id="dailyReward" class="item-info">Награда: опыт игрока</div></div><h3 style="text-align:left;font-size:15px;margin:22px 0 12px">ДОСТИЖЕНИЯ</h3><div id="achievementsGrid" class="achievement-list"></div><h3 style="text-align:left;font-size:15px;margin:22px 0 12px">КАРТЫ · ОТКРЫВАЮТСЯ ПО УРОВНЮ</h3><div id="mapsGrid" class="grid-items"></div>
     <h3 style="text-align:left;font-size:15px;margin:22px 0 12px">ШАРЫ</h3><div id="ballsGrid" class="grid-items"></div>
-    <p class="note">Карты открываются за уровни игрока, а шары — за рекордные очки. Рекорд сохраняется отдельно на каждой карте.</p>
+    <p class="note">Карты и шары открываются за уровни игрока, а не за очки. Рекорд сохраняется отдельно на каждой карте.</p>
     <button class="neon-btn secondary" id="collectionBackBtn">← НАЗАД</button>
   </div></div>
 </section>
@@ -149,11 +152,11 @@ const MAPS=[
 {name:"Золотая энергия",needLevel:10,bg:"#161105",mid:"#44340c",accent:"#fff06a",glow:"#ff9d18",nebula:"#725018",planet:"#c49b24"}
 ];
 const BALLS=[
-{name:"Неоновый",need:0,color:"#35f4ff",glow:"#008dff",points:1},
-{name:"Аметист",need:500,color:"#bd78ff",glow:"#7b35ff",points:2},
-{name:"Кибер-розовый",need:1500,color:"#ff4fd8",glow:"#b52cff",points:5},
-{name:"Пламя",need:3000,color:"#ff9d42",glow:"#ff3427",points:10},
-{name:"Золотой",need:5000,color:"#fff06a",glow:"#ff9d18",points:25}
+{name:"Неоновый",needLevel:1,color:"#35f4ff",glow:"#008dff",points:1},
+{name:"Аметист",needLevel:3,color:"#bd78ff",glow:"#7b35ff",points:2},
+{name:"Кибер-розовый",needLevel:5,color:"#ff4fd8",glow:"#b52cff",points:5},
+{name:"Пламя",needLevel:8,color:"#ff9d42",glow:"#ff3427",points:10},
+{name:"Золотой",needLevel:12,color:"#fff06a",glow:"#ff9d18",points:25}
 ];
 const STORAGE_KEY="oneMoreTimeNeonGameV3";
 const $=id=>document.getElementById(id);
@@ -229,7 +232,7 @@ function showScreen(name){
 }
 function updateMenuStats(){
   $("menuRecord").textContent=record;
-  $("unlockedCount").textContent=MAPS.filter(m=>levelInfo().level>=m.needLevel).length+BALLS.filter(b=>record>=b.need).length+"/"+(MAPS.length+BALLS.length);
+  $("unlockedCount").textContent=MAPS.filter(m=>levelInfo().level>=m.needLevel).length+BALLS.filter(b=>levelInfo().level>=b.needLevel).length+"/"+(MAPS.length+BALLS.length);
   renderProgress();
 }
 function showToast(text,emph=false,comboCount=null){
@@ -263,7 +266,7 @@ const ACHIEVEMENTS=[
  ["💥","Перегрузка","Достигни комбо x40",()=>bestCombo>=40],
  ["👑","Легенда","Собери комбо x100",()=>bestCombo>=100],
  ["🌌","Исследователь","Открой 3 карты",()=>MAPS.filter(m=>levelInfo().level>=m.needLevel).length>=3],
- ["🎨","Коллекционер","Открой 5 шаров",()=>BALLS.filter(b=>record>=b.need).length>=5],
+ ["🎨","Коллекционер","Открой 5 шаров",()=>BALLS.filter(b=>levelInfo().level>=b.needLevel).length>=5],
  ["🏆","Рекордсмен","Набери 5000 очков за одну игру",()=>bestRun>=5000],
  ["🔁","Не сдаюсь","Сыграй 10 партий",()=>gamesPlayed>=10],
  ["🎮","Ветеран","Сыграй 50 партий",()=>gamesPlayed>=50],
@@ -303,17 +306,17 @@ function renderCollection(){
     mapsGrid.appendChild(card);
   });
   BALLS.forEach((b,i)=>{
-    const unlocked=record>=b.need,card=document.createElement("div");
+    const unlocked=levelInfo().level>=b.needLevel,card=document.createElement("div");
     card.className="item-card"+(selectedBall===i?" selected":"")+(!unlocked?" locked":"");
     const preview=document.createElement("div");preview.className="preview";
     const orb=document.createElement("div");orb.className="preview-ball";
     orb.style.background=b.color;orb.style.color=b.glow;preview.appendChild(orb);
     const name=document.createElement("div");name.className="item-name";name.textContent=b.name;
     const info=document.createElement("div");info.className="item-info";
-    info.textContent=selectedBall===i?"✓ Выбран · +"+b.points:unlocked?"+"+b.points+" за попадание":"🔒 "+b.need+" очков";
+    info.textContent=selectedBall===i?"✓ Выбран · +"+b.points:unlocked?"+"+b.points+" за попадание":"🔒 Уровень "+b.needLevel;
     card.append(preview,name,info);
     card.addEventListener("click",()=>{
-      if(!unlocked){showToast("НУЖНО "+b.need+" ОЧКОВ");return}
+      if(!unlocked){showToast("НУЖЕН УРОВЕНЬ "+b.needLevel);return}
       selectedBall=i;syncTheme();saveData();renderCollection();
     });
     ballsGrid.appendChild(card);
@@ -589,26 +592,35 @@ function updateHUD(){
   $("livesValue").textContent="♥ ".repeat(Math.max(0,lives)).trim()+" · ".repeat(Math.max(0,3-lives)).trim();
   updateMenuStats();
 }
+let countdownTimer=null;
 function startGame(){
+  if(countdownTimer){clearInterval(countdownTimer);countdownTimer=null;}
   const today=dayKey();if(lastPlayDay!==today){const yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);const y=yesterday.getFullYear()+"-"+(yesterday.getMonth()+1)+"-"+yesterday.getDate();streak=lastPlayDay===y?streak+1:1;lastPlayDay=today;}gamesPlayed++;saveData();
   initAudio();score=0;combo=1;lives=3;speed=2.025;normalSpeed=2.025;overdrive=false;gameScreen.classList.remove("overdrive-active");elapsed=0;
   ballAngle=-Math.PI/2;targetAngle=randomBetween(-Math.PI,Math.PI);
   targetWidth=Math.PI/5.7;particles=[];rings=[];trail=[];
-  started=true;running=true;gameOver=false;
+  started=true;running=false;gameOver=false;
   pauseOverlay.classList.add("hidden");gameOverOverlay.classList.add("hidden");
-  showScreen("game");syncTheme();updateHUD();syncAudioSettings();
+  showScreen("game");syncTheme();updateHUD();syncAudioSettings();drawBg(performance.now());drawRing(performance.now());drawBall();
   if(musicEnabled)startMusic();else stopMusic();
-  lastTime=performance.now();requestAnimationFrame(loop);
+  const overlay=$("countdownOverlay"),number=$("countdownNumber");overlay.classList.remove("hidden");
+  let count=3;number.textContent=String(count);number.style.animation="none";void number.offsetWidth;number.style.animation="";
+  countdownTimer=setInterval(()=>{
+    count--;
+    if(count>0){number.textContent=String(count);number.style.animation="none";void number.offsetWidth;number.style.animation="";}
+    else if(count===0){number.textContent="СТАРТ!";number.style.fontSize="clamp(44px,12vw,76px)";number.style.animation="none";void number.offsetWidth;number.style.animation="";}
+    else{clearInterval(countdownTimer);countdownTimer=null;overlay.classList.add("hidden");number.style.fontSize="";running=true;lastTime=performance.now();requestAnimationFrame(loop);}
+  },750);
 }
 function pauseGame(){
-  if(!started||gameOver)return;running=false;pauseOverlay.classList.remove("hidden");syncAudioSettings();
+  if(!started||gameOver)return;if(countdownTimer){clearInterval(countdownTimer);countdownTimer=null;$("countdownOverlay").classList.add("hidden");}running=false;pauseOverlay.classList.remove("hidden");syncAudioSettings();
 }
 function resumeGame(){
   if(!started||gameOver){startGame();return}
   pauseOverlay.classList.add("hidden");running=true;lastTime=performance.now();syncAudioSettings();requestAnimationFrame(loop);
 }
 function goHome(){
-  running=false;started=false;gameOver=false;
+  if(countdownTimer){clearInterval(countdownTimer);countdownTimer=null;}$("countdownOverlay").classList.add("hidden");running=false;started=false;gameOver=false;
   pauseOverlay.classList.add("hidden");gameOverOverlay.classList.add("hidden");stopMusic();showScreen("menu");
 }
 function finishGame(){
@@ -659,8 +671,9 @@ function hit(){
 
     saveData();
 
-    const unlockedNow=MAPS.some(m=>m.need>oldGlobalRecord&&m.need<=record)||
-      BALLS.some(b=>b.need>oldGlobalRecord&&b.need<=record);
+    const oldLevel=levelInfo().level;
+    const unlockedNow=MAPS.some(m=>m.needLevel>oldLevel&&m.needLevel<=levelInfo().level)||
+      BALLS.some(b=>b.needLevel>oldLevel&&b.needLevel<=levelInfo().level);
     if(overdrive){
       showToast(combo>=1000?"UNREAL!!! ⚡":combo>=500?"GODLIKE!!! ⚡":combo>=200?"LEGENDARY!!! ⚡":combo>=100?"INSANE!!! ⚡":"OVERDRIVE!!! ⚡",true,combo);
     }else if(unlockedNow){showToast("НОВЫЙ ПРЕДМЕТ ОТКРЫТ!");playEffect("unlock")}
@@ -711,8 +724,9 @@ $("settingsBackBtn").addEventListener("click",()=>{
 function init(){
   selectedMap=clamp(selectedMap,0,MAPS.length-1);
   selectedBall=clamp(selectedBall,0,BALLS.length-1);
-  if(record<MAPS[selectedMap].need)selectedMap=0;
-  if(record<BALLS[selectedBall].need)selectedBall=0;
+  // Карты больше не открываются по очкам: доступ определяется только уровнем.
+  if(levelInfo().level<MAPS[selectedMap].needLevel)selectedMap=0;
+  if(levelInfo().level<BALLS[selectedBall].needLevel)selectedBall=0;
   syncTheme();updateMenuStats();updateHUD();refreshSettings();renderProgress();resizeCanvas();
 }
 init();
