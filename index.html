@@ -60,7 +60,7 @@ button:active{transform:scale(.97)}
 #gameOverTitle{color:#ff7194}
 @media(max-height:650px){.panel{padding:17px 16px}.logo{font-size:30px}.subtitle{margin-bottom:13px}.neon-btn{padding:11px;margin-top:8px}.top-button{top:90px}}
 </style>
-</head>
+<script src="https://telegram.org/js/telegram-web-app.js"></script></head>
 <body>
 <section id="gameScreen" class="screen hidden">
   <canvas id="canvas"></canvas>
@@ -128,8 +128,8 @@ button:active{transform:scale(.97)}
 
 <script>
 (() => {
-"use strict";
-
+  "use strict";
+  
 const MAPS=[
 {name:"Космос",need:0,bg:"#080b1c",mid:"#18213e",accent:"#35f4ff",glow:"#008dff",nebula:"#172f71",planet:"#3154a8"},
 {name:"Неоновый город",need:1000,bg:"#10091d",mid:"#321347",accent:"#ff4fd8",glow:"#b52cff",nebula:"#61205d",planet:"#a02d9c"},
@@ -614,6 +614,11 @@ document.addEventListener("pointerdown",()=>{
   if(!audioCtx)initAudio();else if(audioCtx.state==="suspended")audioCtx.resume(). catch(()=>{});
 },{once:true});
 document.addEventListener("visibilitychange",()=>{if(document.hidden&&running)pauseGame()});
+if (window.Telegram && window.Telegram.WebApp) {
+  const tg = window.Telegram.WebApp;
+  tg.ready();
+  tg.expand();
+}
 })();
 </script>
 </body>
